@@ -1,26 +1,32 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
 
-function App() {
+// Style
+import styled from "styled-components";
+import {ThemeProvider} from 'styled-components';
+import {THEME_SETTINGS} from "./styles/theme";
+
+// Components
+import { SearchForm } from "./components/SearchForm/SearchForm";
+import {Layout} from "./components/Layout";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <ThemeProvider theme={THEME_SETTINGS}>
+          <Layout>
+             <Title>Search by title!</Title>
+            <SearchForm />
+          </Layout>
+      </ThemeProvider>
   );
-}
+};
 
 export default App;
+
+const Title = styled.h1`
+  margin:0 auto;
+  padding: 4rem 0 0;
+  font-size: 1.875rem;
+  line-height:1.44;
+  font-family: ${props => props.theme.primaryFont};
+  max-width: calc(30rem + 2rem);
+`;
