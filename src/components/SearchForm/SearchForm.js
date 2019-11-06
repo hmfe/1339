@@ -124,7 +124,7 @@ export const SearchForm = () => {
     const onKeyDown = (e) => {
         if(e.keyCode === 13){
             if(activeSuggestion !== null){
-                setQuery(filteredSuggestions[activeSuggestion].Title);
+                setQuery(sortedSuggestions[activeSuggestion].Title);
                 setActiveSuggestion(null);
                 submitForm();
             }
@@ -142,7 +142,7 @@ export const SearchForm = () => {
             if(activeSuggestion === null){
                 setActiveSuggestion(0);
             }
-            else if(activeSuggestion + 1 === filteredSuggestions.length) {
+            else if(activeSuggestion + 1 === sortedSuggestions.length) {
                 setActiveSuggestion(0)
             }else {
                 setActiveSuggestion(activeSuggestion + 1);
@@ -150,11 +150,11 @@ export const SearchForm = () => {
         }
     };
 
-    const filteredSuggestions = [...suggestions].sort((a, b) => {
+    const sortedSuggestions = [...suggestions].sort((a, b) => {
         return a['Title'].toLowerCase().indexOf(query) < b['Title'].toLowerCase().indexOf(query) ? -1 : 1;
     });
 
-    const suggestionItems = filteredSuggestions.map((item, index) => {
+    const suggestionItems = sortedSuggestions.map((item, index) => {
         return <SuggestionCard onClick={onSuggestionClick} key={`suggestions-${index}`} isActive={index === activeSuggestion} title={item.Title} query={query}/>
     });
 
@@ -165,7 +165,7 @@ export const SearchForm = () => {
     return (
         <Root onSubmit={preventDefault} action=".">
             <InputContainer>
-                <Label htmlFor="search">Search for a movie!</Label>
+                <Label htmlFor="search">Search</Label>
                 <Input name="search" placeholder="ex: Avengers" type="text" autoComplete="off" onChange={handleOnChange} value={query} onKeyDown={onKeyDown} onBlur={onBlur}/>
                 <Conditional show={isSearching && suggestions.length > 0}>
                     <SuggestionsList>
@@ -192,9 +192,15 @@ export const SearchForm = () => {
 
 const Root = styled.form`
     margin:0 auto;
-    max-width: 30rem;
+    max-width: 36rem;
     background:${props => props.theme.grey};
-    padding:1rem 0;
+    border-radius: 22px;
+    box-sizing: border-box;
+    border:1px solid ${props => props.theme.darkGrey};
+        padding:2rem 1rem;
+      @media ${props=>props.theme.breakpointXSmall}{
+    padding:3rem;
+      }
 `;
 
 const Label = styled.label`
@@ -207,11 +213,14 @@ const Input = styled.input`
     width:100%;
     border: none;
     box-sizing: border-box;
-    font-size:1.25rem;
+    font-size:1rem;
     padding:0.5rem 1rem;
     border-radius: 1.375rem;
     border:1px solid ${props=> props.theme.darkGrey};
     transition: all 150ms ease;
+          @media ${props=>props.theme.breakpointXSmall}{
+        font-size:1.25rem;
+      }
     
     &:focus {
       box-shadow: rgba(0, 0, 0, 0.18) 0px 0px 10px 0px;
@@ -260,9 +269,9 @@ const SubmitButton = styled(Button)`
     font-size: 1rem;
     margin:1rem auto;
     width:100%;
-      @media ${props=>props.theme.breakpointXSmall}{
-        width:auto;
-      }
+  @media ${props=>props.theme.breakpointXSmall}{
+    width:auto;
+  }
 `;
 
 const ClearHistoryButton = styled(Button)`
@@ -271,8 +280,7 @@ const ClearHistoryButton = styled(Button)`
   border: 1px solid black;
   color: black;
   &:hover {
-    background: ${props=>props.theme.grey};
-    border-color:  ${props=>props.theme.crimson};
+    background: ${props=>props.theme.white};
   }
 `;
 

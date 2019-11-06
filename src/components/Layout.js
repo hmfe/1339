@@ -46,8 +46,6 @@ const outlineDefaults = css`
 const Root = styled.section`
   width:100%;
   height:100vh;
-  background: ${props => props.theme.grey};
-  padding:0 1rem;
   box-sizing: border-box;
   font-family: ${props => props.theme.secondaryFont};
   button:focus,

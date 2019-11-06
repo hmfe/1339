@@ -51,6 +51,7 @@ const Title = styled.span`
 const TimeStamp = styled.span`
   font-size:13px;
   padding: 0 1rem;
+
 `;
 
 const DeleteButton = styled(Button)`

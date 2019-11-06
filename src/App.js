@@ -23,10 +23,10 @@ const App = () => {
 export default App;
 
 const Title = styled.h1`
-  margin:0 auto;
-  padding: 4rem 0 0;
+  margin:0 auto 1rem;
+  padding: 4rem 1rem 0;
   font-size: 1.875rem;
   line-height:1.44;
   font-family: ${props => props.theme.primaryFont};
-  max-width: 30rem;
+  max-width: 36rem;
 `;
