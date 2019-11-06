@@ -20,7 +20,8 @@ export const FONTS = {
 
 export const COLORS = {
     grey: '#FBFBFB',
-    blue: '#3559A1',
+    blue: '#485BA8',
+    darkBlue: '#35437B',
     green: '#BED8D4',
     darkGrey: '#80859E',
     orange: '#FF7847',

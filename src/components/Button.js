@@ -27,8 +27,8 @@ const StyledButton = styled.button`
       transition: all 150ms ease;
       font-size: 1rem;
       border-radius: 22px;
-      background: ${props => props.theme.pink};
+      background: ${props => props.theme.blue};
       &:hover {
-          background-color: ${props=>props.theme.darkGrey};
+          background-color: ${props=>props.theme.darkBlue};
       }
 `;

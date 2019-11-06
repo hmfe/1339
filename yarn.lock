@@ -3049,6 +3049,11 @@ create-hmac@^1.1.0, create-hmac@^1.1.2, create-hmac@^1.1.4:
     safe-buffer "^5.0.1"
     sha.js "^2.4.8"
 
+create-markup@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/create-markup/-/create-markup-1.0.0.tgz#3185d8aff3626cd37f1d53ad0cc55678d6df8b3a"
+  integrity sha1-MYXYr/NibNN/HVOtDMVWeNbfizo=
+
 cross-spawn@6.0.5, cross-spawn@^6.0.0, cross-spawn@^6.0.5:
   version "6.0.5"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-6.0.5.tgz#4a5ec7c64dfae22c3a14124dbacdee846d80cbc4"

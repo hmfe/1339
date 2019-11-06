@@ -28,5 +28,5 @@ const Title = styled.h1`
   font-size: 1.875rem;
   line-height:1.44;
   font-family: ${props => props.theme.primaryFont};
-  max-width: calc(30rem + 2rem);
+  max-width: 30rem;
 `;

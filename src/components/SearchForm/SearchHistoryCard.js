@@ -42,12 +42,15 @@ const Root = styled.li`
 `;
 
 const Title = styled.span`
-  padding: 0 1rem;
+  padding: 0;
   font-style: italic;
+  word-break: break-word;
+  
 `;
 
 const TimeStamp = styled.span`
-  font-size:14px;
+  font-size:13px;
+  padding: 0 1rem;
 `;
 
 const DeleteButton = styled(Button)`
