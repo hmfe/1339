@@ -41,6 +41,7 @@ SuggestionCard.propTypes = {
 
 const Root = styled.li`
   margin: 0.1rem 0;
+  cursor: pointer;
   background: ${props =>
     props.isActive ? props => props.theme.lightBlue : "white"};
   padding: 0.5rem 1rem;
@@ -50,5 +51,10 @@ const Root = styled.li`
   mark {
     font-weight: bold;
     background: none;
+  }
+  
+  &:hover {
+    background: ${props => props.theme.lightBlue};
+    box-shadow: rgba(0, 0, 0, 0.18) 0px 0px 10px 0px;
   }
 `;

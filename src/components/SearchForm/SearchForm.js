@@ -37,21 +37,20 @@ export const SearchForm = () => {
     return () => {
       clearTimeout(searchInputTimer);
     };
-  }, [query]);
+  }, []);
 
   // handle preventDefault here instead of in declared in returned jsx not to create new instances.
   const handleSubmit = e => {
-    e.preventDefault();
-      submitForm();
-      console.log('handleSubmit');
+      e.preventDefault();
+      submitForm(query);
   };
 
-  const submitForm = () => {
-      pushNewHistoryItemToState();
+  const submitForm = (value) => {
+      pushNewHistoryItemToState(value);
       setIsSearching(false);
   };
 
-  const pushNewHistoryItemToState = () => {
+  const pushNewHistoryItemToState = (value) => {
     // Date and time for search history.
     const date = new Date();
 
@@ -61,9 +60,9 @@ export const SearchForm = () => {
       minute: "numeric",
       hour12: true
     })}`;
-      console.log('query HISTORY', query);
+      console.log('query HISTORY', value);
     const newHistoryObj = {
-      name: query,
+      name: value,
       timeStamp: timeStamp
     };
 
@@ -75,6 +74,7 @@ export const SearchForm = () => {
   };
 
   async function fetchSearchData(value) {
+      console.log('fetchSearchData');
 
     const search = await getSearchDataByQuery(value);
 
@@ -129,23 +129,25 @@ export const SearchForm = () => {
       console.log('query', query);
     setActiveSuggestion(null);
     setIsSearching(false);
-    submitForm();
+    submitForm(get('Title',sortedSuggestions[index]));
   };
 
-  const onBlur = (e) => {
-    // e.stopPropagation();
-    // setIsSearching(false);
-    // setActiveSuggestion(null);
-    // setSuggestions([]);
-    //   console.log('onBlur');
+  const onBlur = () => {
+    setIsSearching(false);
+    setActiveSuggestion(null);
+    setSuggestions([]);
   };
 
   // Event fired when the user presses a key down
   const onKeyDown = e => {
     if (e.keyCode === 13) {
       if (activeSuggestion !== null) {
-        setQuery(sortedSuggestions[activeSuggestion].Title);
+        setQuery(get('Title', sortedSuggestions[activeSuggestion]));
         setActiveSuggestion(null);
+        setSuggestions([]);
+        submitForm(get('Title', sortedSuggestions[activeSuggestion]));
+      }else if(query){
+        submitForm(query)
       }
     }
     // User pressed the up arrow, decrement the index
@@ -211,7 +213,7 @@ export const SearchForm = () => {
   });
 
   return (
-    <Root onSubmit={handleSubmit} onBlur={onBlur}>
+    <Root onSubmit={(e)=> e.preventDefault()}>
       <InputContainer>
         <Label htmlFor="search">Search</Label>
         <Input
@@ -231,13 +233,14 @@ export const SearchForm = () => {
           {resultMessage}
         </ResultMessage>
       </InputContainer>
-      <SubmitButton type="submit" onClick={handleSubmit} text="Search" />
+      <SubmitButton type="button" onClick={handleSubmit} text="Search" />
       <SearchHistory>
         <SearchHistoryListContainer>
           <h3>Search History</h3>
           <ClearHistoryButton
             onClick={handleClearHistoryOnClick}
             text="Clear history"
+            type="button"
           />
         </SearchHistoryListContainer>
         <Conditional show={history.length > 0}>

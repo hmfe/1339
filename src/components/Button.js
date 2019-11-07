@@ -7,7 +7,7 @@ import styled from "styled-components";
 // components
 export const Button = props => {
   return (
-    <StyledButton onClick={props.onClick} className={props.className}>
+    <StyledButton onClick={props.onClick} className={props.className} type={props.type}>
       {props.text}
     </StyledButton>
   );
@@ -16,7 +16,8 @@ export const Button = props => {
 Button.propTypes = {
   onClick: PropTypes.func,
   className: PropTypes.string,
-  text: PropTypes.string
+  text: PropTypes.string,
+  type: PropTypes.string
 };
 
 const StyledButton = styled.button`
