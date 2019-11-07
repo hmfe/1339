@@ -7,11 +7,15 @@ import styled from "styled-components";
 
 export const SuggestionCard = props => {
 
+  const handleOnClick = () => {
+      props.onSuggestionClick(props.index);
+  };
+
   const setQueryOccurrenceToBoldInTitle = (title, query) => {
     let textToFormat = title.toLowerCase();
     const regexp = new RegExp(query, "ig");
     const replaceMask = "<mark>" + query + "</mark>";
-    textToFormat = textToFormat.replace(regexp, replaceMask);
+    textToFormat = textToFormat.replace(regexp, replaceMask).toLowerCase();
     const markup = createMarkup(textToFormat);
     return markup;
   };
@@ -20,7 +24,7 @@ export const SuggestionCard = props => {
 
   return (
     <Root
-      onClick={props.onSuggestionClick}
+      onClick={handleOnClick}
       key={`suggestions-${props.index}`}
       isActive={props.isActive}
       dangerouslySetInnerHTML={text}
@@ -29,6 +33,7 @@ export const SuggestionCard = props => {
 };
 
 SuggestionCard.propTypes = {
+  index:PropTypes.number,
   onSuggestionClick: PropTypes.func,
   className: PropTypes.string,
   text: PropTypes.string

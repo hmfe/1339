@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 // Components
 import { Button } from "../Button";
+import {fadeInAnimation} from "../../styles/animations";
 
 // components
 export const SearchHistoryCard = props => {
@@ -16,8 +17,10 @@ export const SearchHistoryCard = props => {
   return (
     <Root index={props.index} isActive={props.isActive}>
       <Title>{props.name}</Title>
-      <TimeStamp>{props.timeStamp}</TimeStamp>
-      <DeleteButton type="button" onClick={handleDeleteOnClick} text="Delete" />
+        <RightContainer>
+          <TimeStamp>{props.timeStamp}</TimeStamp>
+          <DeleteButton type="button" onClick={handleDeleteOnClick} text="Delete" />
+        </RightContainer>
     </Root>
   );
 };
@@ -33,22 +36,51 @@ SearchHistoryCard.propTypes = {
 const Root = styled.li`
   width: 100%;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  flex-direction: column;
   box-sizing: border-box;
   border-top: 1px solid ${props => props.theme.pink};
   padding: 0.5rem 0;
+  animation: 250ms ${fadeInAnimation};
+    @media ${props => props.theme.breakpointXSmall} {
+      flex-direction:row;
+    }
 `;
 
 const Title = styled.span`
   padding: 0;
-  font-style: italic;
   word-break: break-word;
+  width:100%;
+  margin:0.5rem 0;
+  @media ${props => props.theme.breakpointXSmall} {
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+    width:60%;
+  }
+`;
+
+const RightContainer = styled.div`
+  display:flex;
+  flex-direction: column;
+  width:100%;
+  @media ${props => props.theme.breakpointXSmall} {
+  width:40%;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-between;
+  }
 `;
 
 const TimeStamp = styled.span`
   font-size: 13px;
-  padding: 0 1rem;
+  padding: 0;
+  margin:0.5rem 0;
+    font-style: italic;
+  @media ${props => props.theme.breakpointXSmall} {
+    padding: 0 1rem;
+  }
 `;
 
 const DeleteButton = styled(Button)`
