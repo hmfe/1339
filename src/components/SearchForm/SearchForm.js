@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { get, size } from 'lodash/fp';
+import { get, size } from "lodash/fp";
 
 // Style
 import styled from "styled-components";
@@ -25,9 +25,7 @@ export const SearchForm = () => {
   const [query, setQuery] = useState("");
   // state-hook for search history
   const [history, setHistory] = useState([]);
-  // state-hook for search history
-  const [isSearching, setIsSearching] = useState(false);
-  // state-hook for when user is typing in search input.
+  // state-hook for suggestions for search
   const [activeSuggestion, setActiveSuggestion] = useState(null);
   // state-hook for message to display after submit.
   const [resultMessage, setResultMessage] = useState("");
@@ -41,16 +39,19 @@ export const SearchForm = () => {
 
   // handle preventDefault here instead of in declared in returned jsx not to create new instances.
   const handleSubmit = e => {
-      e.preventDefault();
+    e.preventDefault();
+    if (query) {
       submitForm(query);
+    }
   };
 
-  const submitForm = (value) => {
-      pushNewHistoryItemToState(value);
-      setIsSearching(false);
+  const submitForm = value => {
+    clearTimeout(searchInputTimer.current);
+    pushNewHistoryItemToState(value);
+    setSuggestions([]);
   };
 
-  const pushNewHistoryItemToState = (value) => {
+  const pushNewHistoryItemToState = value => {
     // Date and time for search history.
     const date = new Date();
 
@@ -60,7 +61,7 @@ export const SearchForm = () => {
       minute: "numeric",
       hour12: true
     })}`;
-      console.log('query HISTORY', value);
+
     const newHistoryObj = {
       name: value,
       timeStamp: timeStamp
@@ -74,13 +75,11 @@ export const SearchForm = () => {
   };
 
   async function fetchSearchData(value) {
-      console.log('fetchSearchData');
-
     const search = await getSearchDataByQuery(value);
 
     if (search.status === 200) {
       // If status is ok from api and search result has data, set the data as suggestions for autocomplete state.
-      if (get('Search',search) && size(get('Search',search)) > 0) {
+      if (get("Search", search) && size(get("Search", search)) > 0) {
         setSuggestions(search.Search);
         setActiveSuggestion(null);
         setResultMessage("");
@@ -92,19 +91,17 @@ export const SearchForm = () => {
       setSuggestions([]);
       setResultMessage(search.error.message);
     }
-
   }
 
   const handleOnChange = e => {
-    const { value } = e.currentTarget;
     clearTimeout(searchInputTimer.current);
-    setIsSearching(true);
+    const { value } = e.currentTarget;
     setQuery(value);
-
+    setSuggestions([]);
     // If input gets a value that is not empty. We set a timeout for the api-call to not stress to api to much.
     if (value) {
       searchInputTimer.current = setTimeout(() => {
-          fetchSearchData(value)
+        fetchSearchData(value);
       }, 400);
     } else {
       // Empty resultMessage when input is emptied.
@@ -124,16 +121,19 @@ export const SearchForm = () => {
     setHistory(historyWithItemFilteredOut);
   };
 
-  const onSuggestionClick = (index) => {
-    setQuery(get('Title',sortedSuggestions[index]));
-      console.log('query', query);
+  const onSuggestionClick = index => {
+    const suggestionTitleToLowerCase = get(
+      "Title",
+      sortedSuggestions[index]
+    ).toLowerCase();
+    setQuery(suggestionTitleToLowerCase);
     setActiveSuggestion(null);
-    setIsSearching(false);
-    submitForm(get('Title',sortedSuggestions[index]));
+    setSuggestions([]);
+    submitForm(suggestionTitleToLowerCase);
   };
 
   const onBlur = () => {
-    setIsSearching(false);
+    setSuggestions([]);
     setActiveSuggestion(null);
     setSuggestions([]);
   };
@@ -142,12 +142,17 @@ export const SearchForm = () => {
   const onKeyDown = e => {
     if (e.keyCode === 13) {
       if (activeSuggestion !== null) {
-        setQuery(get('Title', sortedSuggestions[activeSuggestion]));
+        const suggestionTitleToLowerCase = get(
+          "Title",
+          sortedSuggestions[activeSuggestion]
+        ).toLowerCase();
+        setQuery(suggestionTitleToLowerCase);
         setActiveSuggestion(null);
+        submitForm(suggestionTitleToLowerCase);
         setSuggestions([]);
-        submitForm(get('Title', sortedSuggestions[activeSuggestion]));
-      }else if(query){
-        submitForm(query)
+        clearTimeout(searchInputTimer.current);
+      } else if (query) {
+        submitForm(query);
       }
     }
     // User pressed the up arrow, decrement the index
@@ -172,20 +177,22 @@ export const SearchForm = () => {
 
   const sortSuggestionsArray = () => {
     const sortSuggestionsByIndexOfQuery = [...suggestions].sort((a, b) => {
-
-      return a["Title"].toLowerCase().indexOf(query.toLowerCase()) <
-        b["Title"].toLowerCase().indexOf(query.toLowerCase())
+      return get("Title", a)
+        .toLowerCase()
+        .indexOf(query.toLowerCase()) <
+        get("Title", b)
+          .toLowerCase()
+          .indexOf(query.toLowerCase())
         ? -1
         : 1;
     });
     // Sort result of above by title that is equal to query.
-    return [...sortSuggestionsByIndexOfQuery].sort((a) => {
-        return a["Title"].toLowerCase() === query.toLowerCase() ? -1 : 1;
+    return [...sortSuggestionsByIndexOfQuery].sort(a => {
+      return a["Title"].toLowerCase() === query.toLowerCase() ? -1 : 1;
     });
   };
 
   const sortedSuggestions = sortSuggestionsArray();
-
 
   const suggestionItems = sortedSuggestions.map((item, index) => {
     return (
@@ -213,7 +220,7 @@ export const SearchForm = () => {
   });
 
   return (
-    <Root onSubmit={(e)=> e.preventDefault()}>
+    <Root onSubmit={e => e.preventDefault()}>
       <InputContainer>
         <Label htmlFor="search">Search</Label>
         <Input
@@ -226,10 +233,10 @@ export const SearchForm = () => {
           value={query}
           onKeyDown={onKeyDown}
         />
-        <Conditional show={isSearching && suggestions.length > 0}>
+        <Conditional show={size(suggestions) > 0}>
           <SuggestionsList>{suggestionItems}</SuggestionsList>
         </Conditional>
-        <ResultMessage isVisible={resultMessage && !isSearching}>
+        <ResultMessage isVisible={resultMessage && size(suggestions) > 0}>
           {resultMessage}
         </ResultMessage>
       </InputContainer>
@@ -259,6 +266,7 @@ const Root = styled.form`
   box-sizing: border-box;
   border: 1px solid ${props => props.theme.darkGrey};
   padding: 2rem 1rem;
+  
   @media ${props => props.theme.breakpointXSmall} {
     padding: 3rem;
   }
@@ -315,6 +323,7 @@ const SearchHistory = styled.section``;
 const SearchHistoryListContainer = styled.div`
   display: flex;
   flex-direction: column;
+  
   @media ${props => props.theme.breakpointXSmall} {
     align-items: center;
     flex-direction: row;
@@ -329,8 +338,14 @@ const SubmitButton = styled(Button)`
   font-size: 1rem;
   margin: 1rem auto;
   width: 100%;
+  
   @media ${props => props.theme.breakpointXSmall} {
     width: auto;
+
+    &:hover {
+      background-color: ${props => props.theme.crimson};
+      box-shadow: rgba(0, 0, 0, 0.18) 0px 0px 10px 0px;
+    }
   }
 `;
 
@@ -339,7 +354,7 @@ const ClearHistoryButton = styled(Button)`
   background: none;
   border: 1px solid black;
   color: black;
-  
+
   &:hover {
     background: ${props => props.theme.white};
   }

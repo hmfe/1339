@@ -31,9 +31,4 @@ const StyledButton = styled.button`
   font-size: 1rem;
   border-radius: 22px;
   background: ${props => props.theme.blue};
-
-  &:hover {
-    background-color: ${props => props.theme.crimson};
-    box-shadow: rgba(0, 0, 0, 0.18) 0px 0px 10px 0px;
-  }
 `;
