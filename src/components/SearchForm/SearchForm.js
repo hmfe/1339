@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { get, size } from "lodash/fp";
 
 // Style
-import styled from "styled-components";
+import styled, {css} from "styled-components";
 
 // Api
 import { getSearchDataByQuery } from "../../api/api";
@@ -132,10 +132,9 @@ export const SearchForm = () => {
     submitForm(suggestionTitleToLowerCase);
   };
 
-  const onBlur = () => {
-    setSuggestions([]);
-    setActiveSuggestion(null);
-    setSuggestions([]);
+  const handleClearSearchInput = () => {
+      setQuery('');
+      setSuggestions([]);
   };
 
   // Event fired when the user presses a key down
@@ -223,16 +222,19 @@ export const SearchForm = () => {
     <Root onSubmit={e => e.preventDefault()}>
       <InputContainer>
         <Label htmlFor="search">Search</Label>
-        <Input
-          name="search"
-          id="search"
-          placeholder="ex: Avengers"
-          type="text"
-          autoComplete="off"
-          onChange={handleOnChange}
-          value={query}
-          onKeyDown={onKeyDown}
-        />
+          <InnerInputContainer>
+            <Input
+              name="search"
+              id="search"
+              placeholder="ex: Avengers"
+              type="text"
+              autoComplete="off"
+              onChange={handleOnChange}
+              value={query}
+              onKeyDown={onKeyDown}
+            />
+            <ClearSearchInputButton onClick={handleClearSearchInput} isActive={query} />
+          </InnerInputContainer>
         <Conditional show={size(suggestions) > 0}>
           <SuggestionsList>{suggestionItems}</SuggestionsList>
         </Conditional>
@@ -279,6 +281,7 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
+  position: relative;
   width: 100%;
   border: none;
   box-sizing: border-box;
@@ -287,7 +290,7 @@ const Input = styled.input`
   border-radius: 1.375rem;
   border: 1px solid ${props => props.theme.darkGrey};
   transition: all 150ms ease;
-
+  
   @media ${props => props.theme.breakpointXSmall} {
     font-size: 1.25rem;
   }
@@ -297,8 +300,62 @@ const Input = styled.input`
   }
 `;
 
+
+
 const InputContainer = styled.div`
   position: relative;
+`;
+
+const activeClearInputButtonBeforeStyle = css`
+    transform: translateY(-50%) rotate(45deg);
+    opacity: 1;
+    right:1rem;
+`;
+
+const activeClearInputButtonAfterStyle = css`
+    transform: translateY(-50%) rotate(-45deg);
+    opacity: 1;
+    right:1rem;
+`;
+
+const ClearSearchInputButton = styled.button`
+  position:absolute;
+  top:50%;
+  right:0;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 100%;
+  background: transparent;
+  border:none;
+  cursor:pointer;
+  pointer-events: ${props=>props.isActive ? 'all' : 'none'};
+  
+  &::before, &::after {
+    content:'';
+    display:block;
+    width: 20px;
+    height:2px;
+    background:${props => props.theme.darkGrey};
+    position:absolute;
+    transition: all 150ms ease;
+    opacity: 0;
+    right:0;
+  }
+
+  &::before {
+    top:50%;
+    transform: translateY(-50%) rotate(-45deg);
+    ${props=>props.isActive && activeClearInputButtonBeforeStyle};
+  }
+
+  &::after {
+    top:50%;
+    ${props=>props.isActive && activeClearInputButtonAfterStyle};
+  }
+`;
+
+const InnerInputContainer = styled(InputContainer)`
+
 `;
 
 const UnorderdList = styled.ul`
